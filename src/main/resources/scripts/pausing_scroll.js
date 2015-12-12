@@ -1,3 +1,5 @@
+var j = jQuery.noConflict(true);
+
 function getDocHeight() {
         var D = document;
         return Math.max(
@@ -7,32 +9,27 @@ function getDocHeight() {
         );
     }
 
-(
-    function($) {
-
-        function bottomScroll () {
-            $('body,html').animate({scrollTop: $(window).height()}, 1800, 'swing', function(){
-                    console.log("scroll bot");
-                    if($(window).scrollTop() + $(window).height() == getDocHeight())
-                        window.setTimeout(topScroll, <<showPageDurationSwitch>>);
-                    else
-                        window.setTimeout(bottomScroll, <<showPageDuration>>);
-                });
-        }
-
-        function topScroll () {
-            $('body,html').animate({scrollTop: -$(window).height()}, 1800, 'swing', function(){
-                console.log("scroll top");
-                if($(window).scrollTop() == 0)
-                    window.setTimeout(this.bottomScroll, <<showPageDuration>>);
-                else
-                    window.setTimeout(topScroll, <<showPageDurationSwitch>>);
-
-            });
-        }
-
-        $('document').ready(function(){
-            var timeout = window.setTimeout(bottomScroll, <<showPageDuration>>);
+function bottomScroll () {
+    j('body,html').animate({scrollTop: j(window).height()}, 1800, 'swing', function(){
+            console.log("scroll bot");
+            if(j(window).scrollTop() + j(window).height() == getDocHeight())
+                window.setTimeout(topScroll, <<showPageDurationSwitch>>);
+            else
+                window.setTimeout(bottomScroll, <<showPageDuration>>);
         });
-    }
-)(jQuery);
+}
+
+function topScroll () {
+    j('body,html').animate({scrollTop: -j(window).height()}, 1800, 'swing', function(){
+        console.log("scroll top");
+        if(j(window).scrollTop() == 0)
+            window.setTimeout(this.bottomScroll, <<showPageDuration>>);
+        else
+            window.setTimeout(topScroll, <<showPageDurationSwitch>>);
+
+    });
+}
+
+j('document').ready(function(){
+    var timeout = window.setTimeout(bottomScroll, <<showPageDuration>>);
+});
