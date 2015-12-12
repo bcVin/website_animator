@@ -57,7 +57,7 @@
                         <Label text="Scrollen" />
                         <Label text="Dauer" GridPane.rowIndex="1" />
                         <ComboBox fx:id="comboAnimationType" prefHeight="31.0" prefWidth="367.0" GridPane.columnIndex="1" />
-                        <CheckBox fx:id="checkboxRepeat" mnemonicParsing="false" text="Animation wiederholen" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="checkboxRepeat" mnemonicParsing="false" text="Animation wiederholen, mit Pause von" GridPane.rowIndex="2" />
                         <TextField fx:id="textAnimationDuration" promptText="In Sekunden" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="textRepeatPause" promptText="Pause, in Sekunden" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>

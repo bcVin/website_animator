@@ -29,7 +29,7 @@ function topScroll () {
         console.log("scroll top");
         if(j(window).scrollTop() === 0)
         {
-            window.setTimeout(this.bottomScroll, <<showPageDuration>>);
+            window.setTimeout(bottomScroll, <<showPageDuration>>);
         }
         else
         {
@@ -38,6 +38,6 @@ function topScroll () {
     });
 }
 
-j('document').ready(function(){
+j(document).ready(function(){
     window.setTimeout(bottomScroll, <<showPageDuration>>);
 });
