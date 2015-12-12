@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class Exporter {
 
-    private static final String JQUERY_SRC = "window.jQuery || document.write('<script src=\"http://code.jquery.com/jquery-2.1.4.min.js\">\\x3C/script>')";
+    private static final String JQUERY_SRC = "http://code.jquery.com/jquery-2.1.4.min.js";
     private static final String INFINITE_DURATION = "2147483647";
 
     public static void exportTo(File file, URL url, String animationType, double duration, boolean repeat, double repeatPause) throws IOException {
@@ -41,8 +41,8 @@ public class Exporter {
     }
 
     private static void InjectScript(Document website, String animationScript) {
-        website.head().appendElement("script").text(JQUERY_SRC);
-        website.body().appendElement("script").text(animationScript);
+        website.head().appendElement("script").attr("src", JQUERY_SRC);
+        website.head().appendElement("script").text(animationScript);
     }
 
     private static String configureScript(String animationType, Double duration, Boolean repeat, Double repeatPause) {
