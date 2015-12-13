@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Exporter {
@@ -17,7 +18,7 @@ public class Exporter {
     private static final String JQUERY_SRC = "http://code.jquery.com/jquery-2.1.4.min.js";
     private static final String INFINITE_DURATION = "2147483647";
 
-    public static void exportTo(File file, URL url, String animationType, double duration, boolean repeat, double repeatPause) throws IOException {
+    public static void exportTo(File file, URL url, String animationType, double duration, String bottomReachedAction) throws IOException {
 
         Document website = Jsoup
                 .connect(url.toString())
@@ -26,8 +27,12 @@ public class Exporter {
 
         relativeLinksToAbsolute(website);
 
-        String animationScript = configureScript(animationType, duration * 1000, repeat, repeatPause * 1000);
-        InjectScript(website, animationScript);
+        String scrollActionsScript = loadScript("scroll_actions.js", null);
+        String animationScript = configureScript(animationType, duration * 1000, bottomReachedAction);
+
+        website.head().prependElement("script").attr("src", JQUERY_SRC);
+
+        InjectScripts(website, scrollActionsScript, animationScript);
         CleanPage(website);
 
         saveDocument(file, website);
@@ -40,27 +45,38 @@ public class Exporter {
             banner.remove();
     }
 
-    private static void InjectScript(Document website, String animationScript) {
-        website.head().appendElement("script").attr("src", JQUERY_SRC);
-        website.head().appendElement("script").text(animationScript);
+    private static void InjectScripts(Document website, String... scripts) {
+        for (String script : scripts)
+            website.body().appendElement("script").text(script);
     }
 
-    private static String configureScript(String animationType, Double duration, Boolean repeat, Double repeatPause) {
+    private static String configureScript(String animationType, Double duration, String bottomReachedAction) {
         Map<String, String> args = new HashMap<>();
+        String script = "";
+
+        args.put("duration", duration.toString());
+
+        if (bottomReachedAction.equals(MainWindowController.BOTTOM_JUMP_TOP)) {
+            args.put("bottomReachedAction", "scrollTop");
+        }
 
         if (animationType.equals(MainWindowController.LINEAR_SCROLLING)) {
-            args.put("pauseBeforeRepetition", repeat ? repeatPause.toString() : INFINITE_DURATION);
-            args.put("duration", duration.toString());
-            return loadScript("continuous_scroll.js", args);
+            script = "linear_scroll.js";
+
+            if (bottomReachedAction.equals(MainWindowController.BOTTOM_REVERSE)) {
+                args.put("bottomReachedAction", "scrollUp");
+            }
         }
 
         if (animationType.equals(MainWindowController.PAGEWISE_SCROLLING)) {
-            args.put("showPageDuration", duration.toString());
-            args.put("showPageDurationSwitch", repeat ? duration.toString() : INFINITE_DURATION);
-            return loadScript("pausing_scroll.js", args);
+            script = "pausing_scroll.js";
+
+            if (bottomReachedAction.equals(MainWindowController.BOTTOM_REVERSE)) {
+                args.put("bottomReachedAction", "scrollUp");
+            }
         }
 
-        return null;
+        return loadScript(script, args);
     }
 
     private static void relativeLinksToAbsolute(Document website) {
@@ -89,6 +105,9 @@ public class Exporter {
 
     private static String loadScript(String name, Map<String, String> args) {
         String script = new Scanner(Exporter.class.getClassLoader().getResourceAsStream("scripts" + File.separator + name), "UTF-8").useDelimiter("\\A").next();
+
+        if (args == null)
+            return script;
 
         for (Map.Entry<String, String> arg: args.entrySet()){
             script = script.replace("<<" + arg.getKey() + ">>", arg.getValue());

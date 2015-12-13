@@ -17,14 +17,14 @@ public class MainWindowController {
     public static final String LINEAR_SCROLLING = "Linear";
     public static final String PAGEWISE_SCROLLING = "Seitenweise";
 
+    public static final String BOTTOM_REVERSE = "Umkehren";
+    public static final String BOTTOM_JUMP_TOP = "Oben fortsetzen";
+
     @FXML
     Button buttonSaveAs;
 
     @FXML
     TextField textWebAdress;
-
-    @FXML
-    CheckBox checkboxRepeat;
 
     @FXML
     TextField textAnimationDuration;
@@ -33,7 +33,7 @@ public class MainWindowController {
     ComboBox<String> comboAnimationType;
 
     @FXML
-    TextField textRepeatPause;
+    ComboBox<String> comboAtBottomDo;
 
     @FXML
     public void initialize(){
@@ -41,6 +41,10 @@ public class MainWindowController {
 
         comboAnimationType.getItems().addAll(animationTypes);
         comboAnimationType.getSelectionModel().select(0);
+
+        ObservableList<String> bottomReachedActions = FXCollections.observableArrayList(BOTTOM_JUMP_TOP, BOTTOM_REVERSE);
+        comboAtBottomDo.getItems().addAll(bottomReachedActions);
+        comboAtBottomDo.getSelectionModel().select(0);
     }
 
     @FXML
@@ -57,8 +61,11 @@ public class MainWindowController {
 
             if (file != null){
                 String animationType = comboAnimationType.getSelectionModel().getSelectedItem();
-                Exporter.exportTo(file, url, animationType, Double.parseDouble(textAnimationDuration.getText()), checkboxRepeat.isSelected(), Double.parseDouble(textRepeatPause.getText()));
-                new Alert(Alert.AlertType.INFORMATION, "Website wurde erfolgreich gespeichert.").show();
+                String bottomReachedAction = comboAtBottomDo.getSelectionModel().getSelectedItem();
+
+                Exporter.exportTo(file, url, animationType, Double.parseDouble(textAnimationDuration.getText()), bottomReachedAction);
+
+  new Alert(Alert.AlertType.INFORMATION, "Website wurde erfolgreich gespeichert.").show();
             }
 
         } catch (MalformedURLException e) {

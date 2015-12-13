@@ -10,34 +10,32 @@ function getDocHeight() {
         );
     }
 
-function bottomScroll () {
-    j('body,html').animate({scrollTop: j(window).height()}, 1800, 'swing', function(){
-            console.log("scroll bot");
+function scrollDown() {
+    j('body,html').animate({scrollTop: j(window).scrollTop() + j(window).height()}, 1800, 'swing', function(){
             if(j(window).scrollTop() + j(window).height() == getDocHeight())
             {
-                window.setTimeout(topScroll, <<showPageDurationSwitch>>);
+                window.setTimeout(<<bottomReachedAction>>, <<duration>>);
             }
             else
             {
-                window.setTimeout(bottomScroll, <<showPageDuration>>);
+                window.setTimeout(scrollDown, <<duration>>);
             }
         });
 }
 
-function topScroll () {
-    j('body,html').animate({scrollTop: -j(window).height()}, 1800, 'swing', function(){
-        console.log("scroll top");
+function scrollUp() {
+    j('body,html').animate({scrollTop: j(window).scrollTop() - j(window).height()}, 1800, 'swing', function(){
         if(j(window).scrollTop() === 0)
         {
-            window.setTimeout(bottomScroll, <<showPageDuration>>);
+            window.setTimeout(scrollDown, <<duration>>);
         }
         else
         {
-            window.setTimeout(topScroll, <<showPageDurationSwitch>>);
+            window.setTimeout(scrollUp, <<duration>>);
         }
     });
 }
 
 j(document).ready(function(){
-    window.setTimeout(bottomScroll, <<showPageDuration>>);
+    window.setTimeout(scrollDown, <<duration>>);
 });
